@@ -1,8 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import lexer as ssp
 import os
 import sys
+import subprocess
 from argparse import ArgumentParser
 from argparse import Action
 
@@ -30,6 +31,19 @@ class PathAction(Action):
 #    _path.append(':')
 #    _path.append(path)
 
+def get_full_path(cmd):
+    try:
+        output = subprocess.check_output(['which', cmd], shell=True, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        print("{}".format(e.output))
+        sys.exit(1)
+    return output
+
+def get_arch(cmd):
+    output = subprocess.check_output(['file', '-b', cmd])
+    properties = output.split(',')
+    return properties[1]
+
 def main(stream=None):
     parser = ArgumentParser(description=DESCRIPTION)
 
@@ -49,11 +63,16 @@ def main(stream=None):
             action='version', version='%(prog)s 0.1')
 
     command = None
-    while command != "exit":
+    while True:
         command = input("qemu-shell$ ")
+        if command.startswith("exit"):
+            break
         result = ssp.get_parser().parse(command)
         for p in result:
+            path = get_full_path(p.getCommand().getProgram())
+            arch = get_arch(path)
             print(p)
+            print("path:{} | arch:{}".format(path, arch))
 
 if __name__ == '__main__':
     main()
