@@ -14,7 +14,7 @@ setup(
     # There are some restrictions on what makes a valid project name
     # specification here:
     # https://packaging.python.org/specifications/core-metadata/#name
-    name='qemu-shell',  # Required
+    name='qemu_shell',  # Required
 
     # Versions should comply with PEP 440:
     # https://www.python.org/dev/peps/pep-0440/
@@ -45,7 +45,7 @@ setup(
     # This field corresponds to the "Home-Page" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#home-page-optional
     #url='https://github.com/pypa/sampleproject',  # Optional
-    url='https://github.com/tymion/qemu-shell',
+    url='https://github.com/tymion/qemu_shell',
 
     # This should be your name or the name of the organization which owns the
     # project.
@@ -95,6 +95,12 @@ setup(
     #   py_modules=["my_module"],
     #
     #py_modules = ["qemu_shell"],
+    packages=[
+        'qemu_shell'
+    ],
+    package_dir={
+        'qemu_shell':'qemu_shell'
+    },
     #packages=find_packages(exclude=['contrib', 'docs', 'tests']),  # Required
 
     # This field lists other packages that your project depends on to run.
@@ -144,7 +150,7 @@ setup(
     # executes the function `main` from this package when invoked:
     entry_points={
         'console_scripts': [
-            'qemu_shell=qemu_shell.__main__:main',
+            'qshell=qemu_shell.__main__:main',
         ],
     },
 

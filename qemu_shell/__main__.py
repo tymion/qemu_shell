@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-#import lexer as ssp
+import lexer as ssp
 import os
 import sys
 from argparse import ArgumentParser
@@ -8,7 +8,7 @@ from argparse import Action
 
 DESCRIPTION = ''
 
-class PathAction(argparse.Action):
+class PathAction(Action):
     def __init__(self, option_strings, dest, nargs=None, **kwargs):
         if nargs is not None:
             raise ValueError("nargs not allowed")
@@ -33,24 +33,27 @@ class PathAction(argparse.Action):
 def main(stream=None):
     parser = ArgumentParser(description=DESCRIPTION)
 
-    parser.add_option('-L', '--loader-prefix-path',
+    parser.add_argument('-L', '--loader-prefix-path',
             action=PathAction, dest='loader_prefix_path',
             help='Dynamic loader prefix path.')
 
-    parser.add_option('-l', '--loader-search-path',
+    parser.add_argument('-l', '--loader-search-path',
             action=PathAction, dest='loader_search_path',
             help='Path where dynamic loader search for libraries.')
 
-    optparser.add_option('-p', '--binary-path',
+    parser.add_argument('-p', '--binary-path',
             action=PathAction, dest='binary_path',
             help='Path where shell search for binaries.')
 
-    optparser.add_option('-v', '--version',
+    parser.add_argument('-v', '--version',
             action='version', version='%(prog)s 0.1')
 
-    var = input("qemu-shell$")
-    print(var)
-#    result = ssp.get_parser().parse('ls')
+    command = None
+    while command != "exit":
+        command = input("qemu-shell$ ")
+        result = ssp.get_parser().parse(command)
+        for p in result:
+            print(p)
 
 if __name__ == '__main__':
     main()
