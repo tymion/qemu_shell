@@ -4,6 +4,7 @@ import lexer as ssp
 import os
 import sys
 import subprocess
+from subprocess import PIPE
 import shlex
 from argparse import ArgumentParser
 from argparse import Action
@@ -18,13 +19,17 @@ class PathAction(Action):
 
     def __call__(self, parser, namespace, values, option_string=None):
         if option_string == "-p" or option_string == "--binary-path":
-            _path = os.environ['PATH']
-            os.environ['PATH'] = _path + ":" + values
+            if "PATH" not in os.environ:
+                os.environ['PATH'] = values
+            else:
+                os.environ['PATH'] +=":" + values
         elif option_string == "-L" or option_string == "--loader-prefix-path":
-            os.environ['QEMU_LD_PREFIX'] = path
+            os.environ['QEMU_LD_PREFIX'] = values
         elif option_string == "-l" or option_string == "--loader-search-path":
-            _path = os.environ['LD_LIBRARY_PATH']
-            os.environ['LD_LIBRARY_PATH'] = _path + ":" + values
+            if "LD_LIBRARY_PATH" not in os.environ:
+                os.environ['LD_LIBRARY_PATH'] = values
+            else:
+                os.environ['LD_LIBRARY_PATH'] += ":" + values
 
 def get_full_path(cmd):
     try:
@@ -79,7 +84,7 @@ def main(stream=None):
             print("path:{} | arch:{}".format(path, arch))
         args = shlex.split(command)
         try:
-            output = subprocess.check_output(args, universal_newlines=True)
+            output = subprocess.check_call(args, universal_newlines=True, stdin=PIPE)
         except subprocess.CalledProcessError as e:
             print("Cos nie tal")
 
